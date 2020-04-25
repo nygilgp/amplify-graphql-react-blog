@@ -18,4 +18,5 @@ Pushed to the changes to AWS, and saw DB and API created on the fly
     $ amplify console api
 View the console with command
 
+Installed aws-amplify and aws-amplify-react
 
