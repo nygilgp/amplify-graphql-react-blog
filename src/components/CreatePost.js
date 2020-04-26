@@ -1,5 +1,5 @@
 import React, { Component } from  'react';
-import { API, graphqlOperation } from 'aws-amplify';
+import { API, graphqlOperation, Auth } from 'aws-amplify';
 import { createPost } from '../graphql/mutations'
 
 
@@ -12,7 +12,13 @@ class CreatePost extends Component {
     }
 
     componentDidMount = async () => {
-        // TODO: later
+        await Auth.currentUserInfo()
+            .then(user => {
+                this.setState({
+                    postOwnerId: user.attributes.sub,
+                    postOwnerUsername: user.username,
+                });
+            })
     }
 
     handleAddPost = async (event) => {
@@ -20,11 +26,11 @@ class CreatePost extends Component {
         const input = {
             postTitle: this.state.postTitle,
             postBody: this.state.postBody,
-            postOwnerId: "239nwew", // this.state.postOwnerId,
-            postOwnerUsername: "Neo", // this.state.postOwnerName,
+            postOwnerId: this.state.postOwnerId,
+            postOwnerUsername: this.state.postOwnerUsername,
             createdAt: new Date().toISOString(),
         }
-        const result = await API.graphql(graphqlOperation(createPost, { input }));
+        await API.graphql(graphqlOperation(createPost, { input }));
         this.setState({
             postBody: "",
             postTitle: "",

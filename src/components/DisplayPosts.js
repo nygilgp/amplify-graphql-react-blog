@@ -2,7 +2,7 @@ import React, { Component } from  'react';
 import { API, graphqlOperation } from 'aws-amplify';
 
 import { listPosts } from '../graphql/queries';
-import { onCreatePost } from '../graphql/subscriptions';
+import { onCreatePost, onDeletePost } from '../graphql/subscriptions';
 
 import DeletePost from './DeletePost';
 import EditPost from './EditPost';
@@ -13,23 +13,32 @@ class DisplayPosts extends Component {
     };
 
     componentDidMount = async () => {
-				this.getPosts();
-				
-				this.createPostListner = API.graphql(graphqlOperation(onCreatePost))
-					.subscribe({
-						next: postData => {
-							const newPost = postData.value.data.onCreatePost;
-							const prevPosts = this.state.posts.filter(post => (post.id !== newPost.id));
+            this.getPosts();
+            
+            this.createPostListner = await API.graphql(graphqlOperation(onCreatePost))
+                .subscribe({
+                    next: postData => {
+                        const newPost = postData.value.data.onCreatePost;
+                        const prevPosts = this.state.posts.filter(post => (post.id !== newPost.id));
 
-							const updatePosts = [newPost, ...prevPosts];
-							this.setState({posts: updatePosts});
-						}
-					})
-		};
-		
-		componentWillUnmount() {
-			this.createPostListner.unsubscribe();
-		}
+                        const posts = [newPost, ...prevPosts];
+                        this.setState({posts});
+                    }
+                });
+            this.deletePostListner = await API.graphql(graphqlOperation(onDeletePost))
+                .subscribe({
+                    next: postData => {
+                        const deletedPost = postData.value.data.onDeletePost;
+                        const posts = this.state.posts.filter(post => post.id !== deletedPost.id);
+                        this.setState({posts});
+                    }
+                })
+    };
+    
+    componentWillUnmount() {
+        this.createPostListner.unsubscribe();
+        this.deletePostListner.unsubscribe();
+    }
 
     getPosts = async () => {
         const result = await API.graphql(graphqlOperation(listPosts));
@@ -52,8 +61,8 @@ class DisplayPosts extends Component {
                     <p>{post.postBody}</p>
                     <br />
                     <span>
-                        <DeletePost />
-                        <EditPost />
+                        <DeletePost postId={post.id} />
+                        <EditPost post={post} />
                     </span>
                 </div>
             ))
