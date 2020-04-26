@@ -11,5 +11,23 @@
             "StackId": "arn:aws:cloudformation:us-east-1:719567495469:stack/amplify-blog-blogapi-71954/3783b840-86c5-11ea-abf5-129d8c0b3757",
             "AmplifyAppId": "d17kqfnmfczvn6"
         }
+    },
+    "blogdevx": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-blog-blogdevx-110816-authRole",
+            "UnauthRoleArn": "arn:aws:iam::719567495469:role/amplify-blog-blogdevx-110816-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::719567495469:role/amplify-blog-blogdevx-110816-authRole",
+            "Region": "ap-southeast-1",
+            "DeploymentBucketName": "amplify-blog-blogdevx-110816-deployment",
+            "UnauthRoleName": "amplify-blog-blogdevx-110816-unauthRole",
+            "StackName": "amplify-blog-blogdevx-110816",
+            "StackId": "arn:aws:cloudformation:ap-southeast-1:719567495469:stack/amplify-blog-blogdevx-110816/3de77660-87ae-11ea-880c-06a52c6ee8f8",
+            "AmplifyAppId": "d2as3uyd7ggeeh"
+        },
+        "categories": {
+            "auth": {
+                "blogb911a8c3": {}
+            }
+        }
     }
 }

@@ -20,3 +20,10 @@ View the console with command
 
 Installed aws-amplify and aws-amplify-react
 
+    $ amplify add auth
+Created default auth setting of amplifier
+
+    $ amplify push
+Pushed the changes to AWS, and saw AWS congnito created
+
+Added withAuthenticator to React App, so see the login and signup page
