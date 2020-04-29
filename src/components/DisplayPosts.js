@@ -2,7 +2,7 @@ import React, { Component } from  'react';
 import { API, graphqlOperation } from 'aws-amplify';
 
 import { listPosts } from '../graphql/queries';
-import { onCreatePost, onDeletePost } from '../graphql/subscriptions';
+import { onCreatePost, onDeletePost, onUpdatePost } from '../graphql/subscriptions';
 
 import DeletePost from './DeletePost';
 import EditPost from './EditPost';
@@ -12,18 +12,35 @@ class DisplayPosts extends Component {
         posts: [],
     };
 
+    updatePostsList = (newPost, update) => {
+        let posts = [];
+        const prevPosts = this.state.posts;
+        debugger;
+        if(update) {
+            const index = this.state.posts.findIndex(post => (post.id === newPost.id));
+            posts = [
+                ...prevPosts.slice(0, index),
+                newPost,
+                ...prevPosts.slice(index + 1)
+            ]
+        } else {
+            posts = [newPost, ...prevPosts];
+        }
+        debugger;
+        this.setState({posts});
+    }
+
     componentDidMount = async () => {
             this.getPosts();
             
             this.createPostListner = await API.graphql(graphqlOperation(onCreatePost))
                 .subscribe({
-                    next: postData => {
-                        const newPost = postData.value.data.onCreatePost;
-                        const prevPosts = this.state.posts.filter(post => (post.id !== newPost.id));
-
-                        const posts = [newPost, ...prevPosts];
-                        this.setState({posts});
-                    }
+                    next: postData => this.updatePostsList(postData.value.data.onCreatePost, false) 
+                });
+            this.updatePostListner = await API.graphql(graphqlOperation(onUpdatePost))
+                .subscribe({
+                    next: postData => this.updatePostsList(postData.value.data.onUpdatePost, 
+                        true) 
                 });
             this.deletePostListner = await API.graphql(graphqlOperation(onDeletePost))
                 .subscribe({
@@ -37,6 +54,7 @@ class DisplayPosts extends Component {
     
     componentWillUnmount() {
         this.createPostListner.unsubscribe();
+        this.updatePostListner.unsubscribe();
         this.deletePostListner.unsubscribe();
     }
 
