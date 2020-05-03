@@ -27,3 +27,11 @@ Created default auth setting of amplifier
 Pushed the changes to AWS, and saw AWS congnito created
 
 Added withAuthenticator to React App, so see the login and signup page
+
+
+
+    $ amplify hosting add
+Create a dev s3 bucket hoisting location for us
+
+    $ amplify publish
+Push files to bucket and provide the link
